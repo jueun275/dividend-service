@@ -1,4 +1,4 @@
-package com.example.dividend.model.constants;
+package com.example.dividend.config;
 
 import org.apache.commons.collections4.Trie;
 import org.apache.commons.collections4.trie.PatriciaTrie;
