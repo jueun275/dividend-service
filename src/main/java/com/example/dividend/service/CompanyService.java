@@ -8,6 +8,7 @@ import com.example.dividend.persist.repository.CompanyRepository;
 import com.example.dividend.persist.repository.DividendRepository;
 import com.example.dividend.scraper.Scraper;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.Trie;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CompanyService {
 
+    private final Trie trie;
     private final Scraper yahooFinanceScraper;
 
     private final CompanyRepository companyRepository;
@@ -58,4 +60,34 @@ public class CompanyService {
         this.dividendRepository.saveAll(dividendEntities);
         return company;
     }
+
+
+    // 자동완성 기능 1 - LIKE 연산자를 활용하여 구현
+    public Object getCompanyNamesByKeyword(String keyword) {
+        PageRequest limit = PageRequest.of(0, 10);
+        Page<CompanyEntity> companyEntities = this.companyRepository.findByNameStartingWithIgnoreCase(keyword, limit);
+        return companyEntities.stream()
+            .map(CompanyEntity::getName)
+            .collect(Collectors.toList());
+    }
+
+
+
+    /*
+    // 자동완성 기능 2 - Trie 를 이용하여 자동완성 기능 구현 코드
+    public List<String> autocomplete(String keyword) {
+        return (List<String>) this.trie.prefixMap(keyword).keySet()
+            .stream()
+            .collect(Collectors.toList());
+    }
+
+    public void addAutocompleteKeyword(String keyword) {
+        this.trie.put(keyword, null);   // (key, value)
+    }
+
+    public void deleteAutocompleteKeyword(String keyword) {
+        this.trie.remove(keyword);
+    }
+    */
+
 }

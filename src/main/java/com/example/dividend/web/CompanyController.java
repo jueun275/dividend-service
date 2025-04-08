@@ -1,6 +1,7 @@
 package com.example.dividend.web;
 
 import com.example.dividend.model.Company;
+import com.example.dividend.persist.entity.CompanyEntity;
 import com.example.dividend.service.CompanyService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,10 +19,17 @@ public class CompanyController {
 
     private final CompanyService companyService;
 
-    
+
+    /**
+     * 자동완성 기능을 위한 prefix 단어 검색 기능
+     *
+     * @param keyword 사용자가 입력한 검색어 prefix
+     * @return 입력한 prefix로 시작하는 회사 이름 리스트를 포함한 응답 (HTTP 200 OK)
+     */
     @GetMapping("/autocomplete")
     public ResponseEntity<?> autocomplete(@RequestParam String keyword) {
-        return null;
+        var result = this.companyService.getCompanyNamesByKeyword(keyword);
+        return ResponseEntity.ok(result);
     }
 
     /**
@@ -50,6 +58,7 @@ public class CompanyController {
         }
 
         Company company = this.companyService.save(ticker);
+        this.companyService.getCompanyNamesByKeyword(company.getName());
         return ResponseEntity.ok(company);
     }
 
