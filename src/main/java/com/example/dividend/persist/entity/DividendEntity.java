@@ -2,6 +2,7 @@ package com.example.dividend.persist.entity;
 
 import com.example.dividend.model.Dividend;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -31,9 +32,18 @@ public class DividendEntity {
 
     private String dividend;
 
-    public DividendEntity(Long companyId, Dividend dividend) {
+    @Builder
+    public DividendEntity(Long companyId, LocalDateTime date, String dividend) {
         this.companyId = companyId;
-        this.date = dividend.getDate();
-        this.dividend = dividend.getDividend();
+        this.date = date;
+        this.dividend = dividend;
+    }
+
+    public static DividendEntity from(Dividend dividend, Long companyId) {
+        return DividendEntity.builder()
+            .companyId(companyId)
+            .date(dividend.getDate())
+            .dividend(dividend.getDividend())
+            .build();
     }
 }
