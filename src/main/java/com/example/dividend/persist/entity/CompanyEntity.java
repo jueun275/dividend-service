@@ -25,4 +25,11 @@ public class CompanyEntity {
         this.ticker = company.getTicker();
         this.name = company.getName();
     }
+
+    public Company toDomain() {
+        return Company.builder()
+            .ticker(this.ticker)
+            .name(this.name)
+            .build();
+    }
 }

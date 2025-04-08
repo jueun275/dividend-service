@@ -8,6 +8,9 @@ import com.example.dividend.persist.repository.CompanyRepository;
 import com.example.dividend.persist.repository.DividendRepository;
 import com.example.dividend.scraper.Scraper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -30,6 +33,11 @@ public class CompanyService {
         }
 
         return this.storeCompanyAndDividend(ticker);
+    }
+
+    public Page<Company> getAllCompany(Pageable pageable) {
+        Page<CompanyEntity> companyEntities = companyRepository.findAll(pageable);
+        return companyEntities.map(CompanyEntity::toDomain);
     }
 
     private Company storeCompanyAndDividend(String ticker) {
