@@ -3,6 +3,7 @@ package com.example.dividend.scheduler;
 import com.example.dividend.model.Company;
 import com.example.dividend.model.Dividend;
 import com.example.dividend.model.ScrapedResult;
+import com.example.dividend.model.constants.CacheKey;
 import com.example.dividend.persist.entity.CompanyEntity;
 import com.example.dividend.persist.entity.DividendEntity;
 import com.example.dividend.persist.repository.CompanyRepository;
@@ -10,6 +11,8 @@ import com.example.dividend.persist.repository.DividendRepository;
 import com.example.dividend.scraper.Scraper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +21,7 @@ import java.util.List;
 
 @Slf4j
 @Component
+@EnableCaching
 @RequiredArgsConstructor
 public class ScraperScheduler {
 
@@ -26,7 +30,8 @@ public class ScraperScheduler {
     private final DividendRepository dividendRepository;
 
 
-//    @Scheduled(cron = "${scheduler.scrap.yahoo}")
+    @CacheEvict(value = CacheKey.KEY_FINANCE, allEntries = true)
+    @Scheduled(cron = "${scheduler.scrap.yahoo}")
     public void yahooFinanceScheduling() {
         List<CompanyEntity> companies = companyRepository.findAll();
 
@@ -74,5 +79,5 @@ public class ScraperScheduler {
         System.out.println("테스트 2 : " + LocalDate.now());
     }
  */
-    
+
 }
