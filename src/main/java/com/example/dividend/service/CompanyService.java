@@ -61,6 +61,15 @@ public class CompanyService {
         return company;
     }
 
+    public String deleteCompany(String ticker) {
+        var company = this.companyRepository.findByTicker(ticker)
+            .orElseThrow(() -> new RuntimeException("존재하지 않는 회사입니다:  " + ticker));
+        this.dividendRepository.deleteAllByCompanyId(company.getId());
+        this.companyRepository.delete(company);
+//        this.deleteAutocompleteKeyword(company.getName());  Trie를 이용한 자동완성 사용시 Trie에서도 삭제시켜줘야한다.
+        return company.getTicker();
+    }
+
 
     // 자동완성 기능 1 - LIKE 연산자를 활용하여 구현
     public Object getCompanyNamesByKeyword(String keyword) {
@@ -88,6 +97,6 @@ public class CompanyService {
     public void deleteAutocompleteKeyword(String keyword) {
         this.trie.remove(keyword);
     }
-    */
+       */
 
 }

@@ -1,10 +1,13 @@
 package com.example.dividend.web;
 
 import com.example.dividend.model.Company;
+import com.example.dividend.model.constants.CacheKey;
 import com.example.dividend.persist.entity.CompanyEntity;
+import com.example.dividend.persist.repository.CompanyRepository;
 import com.example.dividend.service.CompanyService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class CompanyController {
 
     private final CompanyService companyService;
-
+    private final CacheManager redisCacheManager;
 
     /**
      * 자동완성 기능을 위한 prefix 단어 검색 기능
@@ -66,8 +69,15 @@ public class CompanyController {
     }
 
     @DeleteMapping("/{ticker}")
+    @PreAuthorize("hasRole('WRITE')")
     public ResponseEntity<?> deleteCompany(@PathVariable String ticker) {
-        return null;
+        String companyName = this.companyService.deleteCompany(ticker);
+        this.clearFianceCompany(companyName);
+        return ResponseEntity.ok(companyName);
+    }
+
+    public void clearFianceCompany(String companyName) {
+        this.redisCacheManager.getCache(CacheKey.KEY_FINANCE).evict(companyName);
     }
 
 
