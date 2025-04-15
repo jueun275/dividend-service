@@ -9,6 +9,7 @@ import com.example.dividend.persist.repository.CompanyRepository;
 import com.example.dividend.persist.repository.DividendRepository;
 import com.example.dividend.scraper.Scraper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.Trie;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +20,7 @@ import org.springframework.util.ObjectUtils;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CompanyService {
@@ -49,9 +51,12 @@ public class CompanyService {
         if (ObjectUtils.isEmpty(company)) {
             throw new RuntimeException("failed to scrap ticker -> " + ticker);
         }
+        log.info("this company is exist: {}", company);
 
         // 2. 해당 회사가 존재할 경우, 회사의 배당금 정보를 스크래핑
         ScrapedResult scrapedResult = yahooFinanceScraper.scrap(company);
+
+        log.info("success scrap Company: {}", company);
 
         // 3. 스크래핑 결과 반환
         CompanyEntity companyEntity = companyRepository.save(new CompanyEntity(company));

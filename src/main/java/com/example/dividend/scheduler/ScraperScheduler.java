@@ -61,6 +61,7 @@ public class ScraperScheduler {
             boolean exists = dividendRepository.existsByCompanyIdAndDate(entity.getCompanyId(), entity.getDate());
             if (!exists) {
                 dividendRepository.save(entity);
+                log.info("insert new dividend -> " + entity.toString());
             }
         }
     }
