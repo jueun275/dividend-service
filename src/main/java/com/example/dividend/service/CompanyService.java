@@ -1,5 +1,6 @@
 package com.example.dividend.service;
 
+import com.example.dividend.exception.impl.NoCompanyException;
 import com.example.dividend.model.Company;
 import com.example.dividend.model.ScrapedResult;
 import com.example.dividend.persist.entity.CompanyEntity;
@@ -63,7 +64,7 @@ public class CompanyService {
 
     public String deleteCompany(String ticker) {
         var company = this.companyRepository.findByTicker(ticker)
-            .orElseThrow(() -> new RuntimeException("존재하지 않는 회사입니다:  " + ticker));
+            .orElseThrow(NoCompanyException::new);
         this.dividendRepository.deleteAllByCompanyId(company.getId());
         this.companyRepository.delete(company);
 //        this.deleteAutocompleteKeyword(company.getName());  Trie를 이용한 자동완성 사용시 Trie에서도 삭제시켜줘야한다.
